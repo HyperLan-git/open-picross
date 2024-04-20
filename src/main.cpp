@@ -38,13 +38,11 @@
 typedef unsigned int uint;
 #endif
 
-static void glfw_error_callback(int error, const char* description) {
-    std::cerr << "GLFW Error " << error << ": " << description << std::endl;
-}
-
 // Main code
 int main(int argc, char** argv) {
-    glfwSetErrorCallback(glfw_error_callback);
+    glfwSetErrorCallback([] (int error, const char* description) {
+        std::cerr << "GLFW Error " << error << ": " << description << std::endl;
+    });
     if (!glfwInit())
         return 1;
 
