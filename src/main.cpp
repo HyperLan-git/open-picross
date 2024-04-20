@@ -14,6 +14,7 @@
 #include <iostream>
 #include <random>
 #include <stdexcept>
+#include <vector>
 #include <string>
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -32,6 +33,8 @@
 #ifdef __EMSCRIPTEN__
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
+
+typedef unsigned int uint;
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -106,11 +109,14 @@ int main(int argc, char** argv) {
 
     const int size = argc > 1 ? std::stoi(argv[1]) : 15;
     if (size < 5 || size > 50) throw std::invalid_argument("size must be between 5 and 50");
-    bool map[size][size], revealed[size][size], cross[size][size];
+    std::vector<std::vector<bool>> map(size), revealed(size), cross(size);
+    for (size_t i = 0; i < size; i++) {
+        map[i].resize(size);
+        revealed[i].resize(size);
+        cross[i].resize(size);
+    }
     uint mistakes = 0, tiles = 0, open = 0;
 
-    memset(revealed, 0, sizeof(revealed));
-    memset(cross, 0, sizeof(cross));
     std::random_device rand;
     for(int i = 0; i < size; i++) {
         for(int j = 0; j < size; j++) {
@@ -118,11 +124,11 @@ int main(int argc, char** argv) {
             if(map[j][i]) tiles++;
         }
     }
-    int numsX[size][size], numsY[size][size];
-    memset(numsX, 0, sizeof(numsX));
-    memset(numsY, 0, sizeof(numsY));
+    std::vector<std::vector<int>> numsX(size), numsY(size);
     for(int i = 0; i < size; i++) {
         int idx = 0, idy = 0;
+        numsX[i].resize(size);
+        numsY[i].resize(size);
         for(int j = 0; j < size; j++) {
             if(map[i][j]) {
                 numsY[i][idy]++;

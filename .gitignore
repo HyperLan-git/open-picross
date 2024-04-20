@@ -1,3 +1,6 @@
 *.o
 imgui.ini
 main
+.vs
+Debug
+*.pdb
